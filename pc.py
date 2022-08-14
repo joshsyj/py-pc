@@ -1,11 +1,13 @@
 
 import re
 import requests
+import parsel
+
 
 lis = []
 lis_1 = []
 
-for page in range(70, 100):
+for page in range(1, 100):
     url = f'https://free.kuaidaili.com/free/inha/{page}/'
     print(url)
     response = requests.get(url)
@@ -13,11 +15,15 @@ for page in range(70, 100):
    
     # print(response.text)
 
-    ip_list = re.findall('<td data-title="IP">(.*?)</td>',response.text)
-    port_list = re.findall('<td data-title="PORT">(.*?)</td>',response.text)
+    # ip_list = re.findall('<td data-title="IP">(.*?)</td>',response.text)
+    # port_list = re.findall('<td data-title="PORT">(.*?)</td>',response.text)
+    selector = parsel.Selector(response.text)
+    ip_list = selector.css('#list tbody tr td:nth-child(1)::text').getall()
+    port_list = selector.css('#list tbody tr td:nth-child(2)::text').getall()
 
-    # print(ip_list)
-    # print(port_list)
+
+    print(ip_list)
+    print(port_list)
 
     for ip,port in zip(ip_list,port_list):
         
